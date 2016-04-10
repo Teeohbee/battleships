@@ -2,11 +2,11 @@ require 'ship'
 
 describe Ship do
   before(:each) do
-    @ship = Ship.new(:battleship, :H)
+    @ship = Ship.new(:patrol_boat, :H)
   end
 
   it 'generates size based on ship type' do
-    expect(@ship.size).to eq 4
+    expect(@ship.size).to eq 2
   end
 
   it 'has a size' do
@@ -41,5 +41,10 @@ describe Ship do
     start_hp = @ship.hp
     @ship.gets_got
     expect(@ship.hp).to eq(start_hp - 1)
+  end
+
+  it "can tell when a ship has sunk" do
+    2.times { @ship.gets_got }
+    expect(@ship.has_sunk?).to eq true
   end
 end

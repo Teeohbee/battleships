@@ -9,7 +9,6 @@ class Board
   end
 
   def place_ship(ship, starting_location)
-    # valid_placement?(starting_location)
     calculate_ship_location(ship, starting_location)
   end
 
@@ -30,32 +29,36 @@ class Board
     end
   end
 
-  # def valid_placement?(starting_location)
-  #   location_array = starting_location.scan(/\d+|\D+/)
-  #   x = location_array[0]
-  #   y = location_array[1].to_i
-  #   if x <= "J" && y <= 10
-  #     true
-  #   else
-  #     fail 'Invalid placement - Not on board'
-  #   end
-  # end
-
   def calculate_ship_location(ship, starting_location)
     placement_array = [starting_location]
     location_array = starting_location.scan(/\d+|\D+/)
-    letter = location_array[0]
-    number = location_array[1].to_i
+    letter, number = location_array[0], location_array[1].to_i
     (ship.size - 1).times do
       ship.direction == :H ? number += 1 : letter = letter.next
       placement_array << "#{letter}#{number}"
     end
+    check_ship_location_on_board(placement_array)
+    check_ship_overlap(placement_array)
+    add_ship_details_to_board(ship, placement_array)
+  end
+
+  def check_ship_location_on_board(placement_array)
     placement_array.each do |coord|
       if coord[0] > 'J' || coord[1..-1].to_i > 10 || coord[1..-1].to_i < 1
         fail 'Location not on board'
       end
     end
-    ships.merge!(ship => placement_array)
   end
 
+  def check_ship_overlap(placement_array)
+    if (ships.values.flatten & placement_array).empty?
+      true
+    else
+      fail 'Overlap'
+    end
+  end
+
+  def add_ship_details_to_board(ship, placement_array)
+    ships.merge!(ship => placement_array)
+  end
 end

@@ -26,6 +26,6 @@ class Ship
   end
 
   def has_sunk?
-    @hp == 0
+    hp == 0
   end
 end

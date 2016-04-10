@@ -14,12 +14,13 @@ describe Board do
       expect(subject).to respond_to(:place_ship).with(2).argument
     end
 
-    xit 'doesn\'t let you place off board' do
-    expect { subject.place_ship(horizontal_ship, 'Z23') }.to raise_error "Invalid placement - Not on board"
-    end
-
     it 'doesn\'t let physical location go off board' do
       expect { subject.place_ship(horizontal_ship, 'A10') }.to raise_error 'Location not on board'
+    end
+
+    it "doesn't let ships overlap" do
+      subject.place_ship(horizontal_ship, 'A1')
+      expect { subject.place_ship(horizontal_ship, 'A2') }.to raise_error 'Overlap'
     end
 
     it 'places a ship on the board' do
@@ -74,10 +75,9 @@ describe Board do
     end
 
     xit "should announce ship sinkings" do
-      ship = double :ship, size: 2, direction: :H, gets_got: nil
       subject.place_ship(small_ship, "A1")
       subject.fire("A1")
-      allow(ship).to receive(:has_sunk){true}
+      allow(small_ship).to receive(:has_sunk) { true }
       expect(subject.fire("A2")).to eq "You sunk my battleship!"
     end
 
@@ -85,8 +85,10 @@ describe Board do
       subject.place_ship(small_ship, "A1")
       subject.fire("A1")
       subject.fire("A2")
+      allow(small_ship).to receive(:has_sunk) {true}
       expect(subject.ships.include?(small_ship)).to be false
     end
-
   end
 end
+
+
